@@ -2,8 +2,9 @@ import React from "react";
 import { Badge, Group, Stack } from "@mantine/core";
 import { MidiEvent, MidiMetaEvent } from "midi-file";
 import { noteNumberToName } from "@guillaumearm/midiutils";
-import { capitalize, startCase } from "lodash-es";
-import { Description } from "../utility";
+import { capitalize, round, startCase } from "lodash-es";
+import { Description } from "../utility/visuals";
+import { altTempo } from "../utility/algorithms";
 
 type Props = {
   event: MidiEvent;
@@ -40,7 +41,7 @@ export default function EventInfo({ event }: Props) {
       case "setTempo":
         return (
           <Description label="BPM">
-            {+(60e6 / event.microsecondsPerBeat).toFixed(2)} (
+            {round(altTempo(event.microsecondsPerBeat), 2)} (
             {event.microsecondsPerBeat} µs / beat)
           </Description>
         );
@@ -71,7 +72,7 @@ export default function EventInfo({ event }: Props) {
     }
   };
   return (
-    <Stack spacing={8}>
+    <Stack spacing={6}>
       <Description label="Type">
         <Group>
           {capitalize(startCase(event.type))}{" "}

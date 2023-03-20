@@ -15,26 +15,30 @@ import { useInputState } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { DataTable } from "mantine-datatable";
 import { IconDots, IconRuler2 } from "@tabler/icons-react";
-import { MidiEvent, MidiMetaEvent } from "midi-file";
+import { MidiData, MidiEvent, MidiMetaEvent } from "midi-file";
 import { noteNumberToName } from "@guillaumearm/midiutils";
-import { capitalize, startCase } from "lodash-es";
+import { capitalize, round, startCase } from "lodash-es";
+import dayjs from "dayjs";
 import Scaler from "./Scaler";
 import EventInfo from "./EventInfo";
-import { Description, detectBPM } from "../utility";
 import { EVENT_PAGE_SIZE } from "../session/constants";
+import { Description } from "../utility/visuals";
+import { getBPMs, getDuration } from "../utility/algorithms";
 
 type Props = {
   n: number;
+  data: MidiData;
   track: MidiEvent[];
   setTrack(track: MidiEvent[]): void;
 };
 
-export default function Track({ n, track, setTrack }: Props) {
+export default function Track({ n, data, track, setTrack }: Props) {
   const [metaOnly, setMetaOnly] = useInputState(false);
   const [scalerOpen, setScalerOpen] = useState(false);
   const [page, setPage] = useState(1);
 
-  const bpms = useMemo(() => detectBPM(track), [track]);
+  const bpms = useMemo(() => getBPMs(track), [track]);
+  const duration = useMemo(() => getDuration(data, track), [data, track]);
 
   const records = useMemo(
     () =>
@@ -62,7 +66,16 @@ export default function Track({ n, track, setTrack }: Props) {
         </Button>
       </Group>
       <Stack mt="md">
-        <Description label="BPM">{bpms}</Description>
+        <Stack spacing={6}>
+          <Description label="BPM">
+            {bpms.map((bpm) => round(bpm, 2))}
+          </Description>
+          {duration && (
+            <Description label="Duration">
+              {dayjs.duration(round(duration / 1000)).format("HH:mm:ss.SSS")}
+            </Description>
+          )}
+        </Stack>
         <Box h={500}>
           <DataTable
             striped

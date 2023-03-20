@@ -17,7 +17,7 @@ import { IconBrandGithub } from "@tabler/icons-react";
 import { MidiData } from "midi-file";
 import FileUpload from "./FileUpload";
 import Editor from "./Editor";
-import { downloadMidi, readMidi } from "../utility";
+import { downloadMidi, readMidi } from "../utility/io";
 
 type AppState = {
   file: File | null;
@@ -36,6 +36,8 @@ function App() {
   return (
     <Container py="md">
       <Anchor
+        target="_blank"
+        rel="noopener noreferrer"
         href="https://github.com/strblr/midi_scaler"
         pos="absolute"
         display="block"

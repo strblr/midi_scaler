@@ -9,7 +9,9 @@ import {
 } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { MidiEvent } from "midi-file";
-import { Description, detectBPM, scaleBPM } from "../utility";
+import { round } from "lodash-es";
+import { Description } from "../utility/visuals";
+import { getBPMs, scaleTempo } from "../utility/algorithms";
 
 type Props = {
   open: boolean;
@@ -21,7 +23,8 @@ type Props = {
 export default function Scaler({ open, onClose, track, setTrack }: Props) {
   const [newBPM, setNewBPM] = useInputState(120);
   const [keepDuration, setKeepDuration] = useInputState(true);
-  const bpms = useMemo(() => detectBPM(track), [track]);
+  const bpms = useMemo(() => getBPMs(track), [track]);
+  const scaleFactor = newBPM / bpms[0];
   return (
     <Modal title="Scale BPM" opened={open} onClose={onClose}>
       {bpms.length > 1 ? (
@@ -31,8 +34,8 @@ export default function Scaler({ open, onClose, track, setTrack }: Props) {
         </Alert>
       ) : (
         <Stack spacing="xs">
-          <Description label="Current BPM">{bpms}</Description>
-          <Description label="Scale factor">{newBPM / bpms[0]}</Description>
+          <Description label="Current BPM">{round(bpms[0], 2)}</Description>
+          <Description label="Scale factor">{scaleFactor}</Description>
           <NumberInput
             label="New BPM"
             precision={2}
@@ -48,7 +51,7 @@ export default function Scaler({ open, onClose, track, setTrack }: Props) {
           />
           <Button
             onClick={() => {
-              setTrack(scaleBPM(track, newBPM, keepDuration));
+              setTrack(scaleTempo(track, scaleFactor, keepDuration));
               onClose();
             }}
           >

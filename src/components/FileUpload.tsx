@@ -3,7 +3,7 @@ import { Anchor, Box, Group, rem, Text, useMantineTheme } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
 import { IconFileMusic, IconUpload, IconX } from "@tabler/icons-react";
-import { loadDemo } from "../utility";
+import { loadDemo } from "../utility/io";
 
 type Props = {
   onDrop: (file: File) => void;

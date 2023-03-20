@@ -3,7 +3,7 @@ import { Anchor, SimpleGrid, Stack } from "@mantine/core";
 import { useScrollIntoView } from "@mantine/hooks";
 import { MidiData } from "midi-file";
 import Track from "./Track";
-import { Description } from "../utility";
+import { Description } from "../utility/visuals";
 
 type Props = {
   data: MidiData;
@@ -36,7 +36,11 @@ export default function Editor({ data, setData }: Props) {
         <>
           <Description label="Division">
             {data.header.ticksPerBeat} ticks / beat (
-            <Anchor href="https://en.wikipedia.org/wiki/Pulses_per_quarter_note">
+            <Anchor
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://en.wikipedia.org/wiki/Pulses_per_quarter_note"
+            >
               PPQN
             </Anchor>
             )
@@ -49,6 +53,7 @@ export default function Editor({ data, setData }: Props) {
           <Track
             key={index}
             n={index + 1}
+            data={data}
             track={track}
             setTrack={(track) =>
               setData({

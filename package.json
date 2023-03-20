@@ -19,6 +19,7 @@
     "@mantine/modals": "^6.0.2",
     "@mantine/notifications": "^6.0.2",
     "@tabler/icons-react": "^2.11.0",
+    "dayjs": "^1.11.7",
     "lodash-es": "^4.17.21",
     "mantine-datatable": "^2.2.4",
     "midi-file": "^1.2.4",
