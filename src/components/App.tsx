@@ -75,8 +75,17 @@ function App() {
             </List.Item>
           </List>
           <Text inherit mt="xs">
-            Note: The app works currently best on SMF0 MIDI files. A futur
-            update will add full support for SMF1 and SMF2 files.
+            Note: The app works currently best on SMF0 MIDI files. Future
+            updates may add full support for SMF1 and SMF2 files. If you're
+            interested in this, please let me know in the{" "}
+            <Anchor
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://github.com/strblr/midi_scaler/issues"
+            >
+              GitHub issue section
+            </Anchor>
+            .
           </Text>
         </Alert>
         <FileUpload
