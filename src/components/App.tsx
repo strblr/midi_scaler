@@ -1,15 +1,18 @@
 import React from "react";
 import {
   Alert,
+  Anchor,
   Button,
   Center,
   Container,
   List,
   Loader,
   Stack,
+  ThemeIcon,
   Title
 } from "@mantine/core";
 import { useSetState } from "@mantine/hooks";
+import { IconBrandGithub } from "@tabler/icons-react";
 import { MidiData } from "midi-file";
 import FileUpload from "./FileUpload";
 import Editor from "./Editor";
@@ -31,6 +34,17 @@ function App() {
   });
   return (
     <Container py="md">
+      <Anchor
+        href="https://github.com/strblr/midi_scaler"
+        pos="absolute"
+        display="block"
+        top="1rem"
+        right="1rem"
+      >
+        <ThemeIcon variant="light">
+          <IconBrandGithub />
+        </ThemeIcon>
+      </Anchor>
       <Stack spacing="2rem">
         <Title order={1} align="center">
           MIDI Scaler
