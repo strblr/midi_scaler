@@ -8,7 +8,7 @@ import {
   writeMidi
 } from "midi-file";
 import { compact, isEmpty } from "lodash-es";
-import { DEFAULT_BPM } from "./session/constants";
+import { DEFAULT_BPM, DEMO_URL } from "./session/constants";
 
 type DescriptionProps = {
   label: ReactNode;
@@ -21,6 +21,14 @@ export function Description({ label, children }: DescriptionProps) {
       <Text fw={500}>{label}:</Text>
       <Text sx={{ flexGrow: 1 }}>{children}</Text>
     </Group>
+  );
+}
+
+export async function loadDemo() {
+  const result = await fetch(DEMO_URL);
+  return new File(
+    [await result.blob()],
+    DEMO_URL.split("/").pop() ?? "demo.mid"
   );
 }
 

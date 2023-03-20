@@ -8,6 +8,7 @@ import {
   List,
   Loader,
   Stack,
+  Text,
   ThemeIcon,
   Title
 } from "@mantine/core";
@@ -71,6 +72,10 @@ function App() {
               <b>Export</b> the final result
             </List.Item>
           </List>
+          <Text inherit mt="xs">
+            Note: The app works currently best on SMF0 MIDI files. A futur
+            update will add full support for SMF1 and SMF2 files.
+          </Text>
         </Alert>
         <FileUpload
           onDrop={async (file) => {
