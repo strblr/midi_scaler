@@ -62,6 +62,12 @@ export default function EventInfo({ event }: Props) {
             <Description label="32nd notes">{event.thirtyseconds}</Description>
           </>
         );
+      case "keySignature":
+        return (
+          <Description label="Signature">
+            {event.key} {event.scale}
+          </Description>
+        );
     }
   };
   return (
