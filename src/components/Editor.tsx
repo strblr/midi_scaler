@@ -37,7 +37,7 @@ export default function Editor({ data, setData }: Props) {
         </>
       )}
       <Description label="Tracks" />
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={2} breakpoints={[{ maxWidth: "sm", cols: 1 }]}>
         {data.tracks.map((track, index) => (
           <Track
             key={index}
