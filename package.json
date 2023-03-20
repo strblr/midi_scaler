@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
+    "@guillaumearm/midiutils": "^0.1.0",
     "@mantine/core": "^6.0.2",
     "@mantine/dropzone": "^6.0.2",
     "@mantine/hooks": "^6.0.2",
+    "@mantine/modals": "^6.0.2",
     "@mantine/notifications": "^6.0.2",
     "@tabler/icons-react": "^2.11.0",
     "lodash-es": "^4.17.21",
@@ -33,5 +35,9 @@
     "typescript": "^5.0.2",
     "vite": "^4.2.0",
     "vite-plugin-node-polyfills": "^0.7.0"
+  },
+  "prettier": {
+    "trailingComma": "none",
+    "allowParens": "avoid"
   }
 }

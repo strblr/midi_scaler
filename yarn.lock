@@ -443,6 +443,11 @@
     aria-hidden "^1.1.3"
     tabbable "^6.0.1"
 
+"@guillaumearm/midiutils@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@guillaumearm/midiutils/-/midiutils-0.1.0.tgz#5c55899d73fa0011d4437255a9791cc2d62d1ffb"
+  integrity sha512-0z8ey0JSS74Ofz2/jDUWJ808YGDMp1T4kJWNfyycXpbf4XbCiUjWBMeQfY/TS6rsQJL47R+E1c0aZFC7lNVsbg==
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -507,6 +512,13 @@
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-6.0.2.tgz#88433aade23237c1566a083b80e6620eaa932561"
   integrity sha512-wLSkp0NRe4XN7JujIUvkKghIBJC9YZ33CJlrFbcBFLD6LiSLX7lWyWOsiFzXrPND0Hpgn3AjckFQGblA8n34XA==
+
+"@mantine/modals@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@mantine/modals/-/modals-6.0.2.tgz#38cfb513658d91a6fab19e1a956c184b3a521c5c"
+  integrity sha512-R15OASfFfXdeDERzDf878AWjr6LgVTgGGX7SKHTd14VjyEi+QlzGvshZmSgO0hUo3gg2ONa8Pr9clZaFHY5HTQ==
+  dependencies:
+    "@mantine/utils" "6.0.2"
 
 "@mantine/notifications@^6.0.2":
   version "6.0.2"

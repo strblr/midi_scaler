@@ -3,16 +3,25 @@ import {
   ActionIcon,
   Badge,
   Box,
+  Button,
   Group,
-  Menu,
   Paper,
+  Stack,
+  Switch,
   Text,
-  Title,
+  Title
 } from "@mantine/core";
+import { useInputState } from "@mantine/hooks";
+import { modals } from "@mantine/modals";
 import { DataTable } from "mantine-datatable";
 import { IconDots, IconRuler2 } from "@tabler/icons-react";
 import { MidiEvent, MidiMetaEvent } from "midi-file";
+import { noteNumberToName } from "@guillaumearm/midiutils";
 import { capitalize, startCase } from "lodash-es";
+import Scaler from "./Scaler";
+import EventInfo from "./EventInfo";
+import { Description, detectBPM } from "../utility";
+import { EVENT_PAGE_SIZE } from "../session/constants";
 
 type Props = {
   n: number;
@@ -21,89 +30,119 @@ type Props = {
 };
 
 export default function Track({ n, track, setTrack }: Props) {
-  const PAGE_SIZE = 20;
+  const [metaOnly, setMetaOnly] = useInputState(false);
+  const [scalerOpen, setScalerOpen] = useState(false);
   const [page, setPage] = useState(1);
 
+  const bpms = useMemo(() => detectBPM(track), [track]);
+
   const records = useMemo(
-    () => track.map((event, i) => ({ ...event, i })),
-    [track]
+    () =>
+      track
+        .map((event, i) => ({ ...event, i }))
+        .filter((event) => !metaOnly || (event as MidiMetaEvent<any>).meta),
+    [track, metaOnly]
   );
 
-  const currentRecords = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
+  const pageRecords = useMemo(() => {
+    const start = (page - 1) * EVENT_PAGE_SIZE;
+    const end = start + EVENT_PAGE_SIZE;
     return records.slice(start, end);
   }, [page, records]);
 
   return (
     <Paper shadow="xs" p="md" withBorder>
-      <Group position="apart" mb="md">
+      <Group position="apart">
         <Title order={4}>Track {n}</Title>
-        <Menu withArrow shadow="md" position="bottom-end">
-          <Menu.Target>
-            <ActionIcon>
-              <IconDots />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item icon={<IconRuler2 size={14} />}>Scale BPM</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+        <Button
+          leftIcon={<IconRuler2 size={16} />}
+          onClick={() => setScalerOpen(true)}
+        >
+          Scale BPM
+        </Button>
       </Group>
-      <Box h={500}>
-        <DataTable
-          striped
-          idAccessor="i"
-          records={currentRecords}
-          columns={[
-            {
-              accessor: "i",
-              title: "#",
-            },
-            {
-              accessor: "deltaTime",
-              title: "Tick delta",
-            },
-            {
-              accessor: "type",
-              title: "Type",
-              render: (event) => {
-                return (
-                  <Group>
-                    <Text>
-                      {capitalize(startCase(event.type))}
-                      {event.type === "controller" && (
-                        <> ({event.controllerType})</>
+      <Stack mt="md">
+        <Description label="BPM">{bpms}</Description>
+        <Box h={500}>
+          <DataTable
+            striped
+            idAccessor="i"
+            records={pageRecords}
+            columns={[
+              {
+                accessor: "i",
+                title: "#"
+              },
+              {
+                accessor: "deltaTime",
+                title: "Tick delta"
+              },
+              {
+                accessor: "type",
+                title: "Type",
+                render: (event) => {
+                  return (
+                    <Group>
+                      <Text>
+                        {capitalize(startCase(event.type))}
+                        {event.type === "controller" && (
+                          <> ({event.controllerType})</>
+                        )}
+                        {(event.type === "noteOn" ||
+                          event.type === "noteOff") && (
+                          <> ({noteNumberToName(event.noteNumber)})</>
+                        )}
+                      </Text>
+                      {(event as MidiMetaEvent<any>).meta && (
+                        <Badge>Meta</Badge>
                       )}
-                    </Text>
-                    {(event as MidiMetaEvent<any>).meta && <Badge>Meta</Badge>}
-                  </Group>
-                );
+                    </Group>
+                  );
+                }
               },
-            },
-            {
-              accessor: "index",
-              title: "More",
-              render: () => {
-                return (
-                  <ActionIcon>
-                    <IconDots />
-                  </ActionIcon>
-                );
-              },
-            },
-          ]}
-          totalRecords={track.length}
-          recordsPerPage={PAGE_SIZE}
-          page={page}
-          onPageChange={setPage}
-        />
-      </Box>
-      <Group position="right" mt={4}>
-        <Text color="dimmed" size="sm">
-          {track.length} events
-        </Text>
-      </Group>
+              {
+                accessor: "index",
+                title: "More",
+                render: (event) => {
+                  return (
+                    <ActionIcon
+                      onClick={() =>
+                        modals.open({
+                          title: "Event details",
+                          children: <EventInfo event={event} />
+                        })
+                      }
+                    >
+                      <IconDots />
+                    </ActionIcon>
+                  );
+                }
+              }
+            ]}
+            totalRecords={records.length}
+            recordsPerPage={EVENT_PAGE_SIZE}
+            page={page}
+            onPageChange={setPage}
+          />
+        </Box>
+        <Stack spacing={4} align="end">
+          <Switch
+            labelPosition="left"
+            label="Show only meta"
+            checked={metaOnly}
+            onChange={setMetaOnly}
+          />
+          <Text color="dimmed" size="sm">
+            {records.length} events
+          </Text>
+        </Stack>
+      </Stack>
+      <Scaler
+        open={scalerOpen}
+        onClose={() => setScalerOpen(false)}
+        track={track}
+        setTrack={setTrack}
+      />
     </Paper>
   );
 }

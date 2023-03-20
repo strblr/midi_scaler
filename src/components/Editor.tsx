@@ -1,5 +1,5 @@
 import React from "react";
-import { SimpleGrid, Stack } from "@mantine/core";
+import { Anchor, SimpleGrid, Stack } from "@mantine/core";
 import { MidiData } from "midi-file";
 import Track from "./Track";
 import { Description } from "../utility";
@@ -28,7 +28,11 @@ export default function Editor({ data, setData }: Props) {
       ) : (
         <>
           <Description label="Division">
-            {data.header.ticksPerBeat} ticks / beat
+            {data.header.ticksPerBeat} ticks / beat (
+            <Anchor href="https://en.wikipedia.org/wiki/Pulses_per_quarter_note">
+              PPQN
+            </Anchor>
+            )
           </Description>
         </>
       )}
@@ -42,7 +46,7 @@ export default function Editor({ data, setData }: Props) {
             setTrack={(track) =>
               setData({
                 ...data,
-                tracks: data.tracks.map((t, i) => (i === index ? track : t)),
+                tracks: data.tracks.map((t, i) => (i === index ? track : t))
               })
             }
           />

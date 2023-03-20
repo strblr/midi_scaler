@@ -1,6 +1,14 @@
 import React, { ReactNode } from "react";
 import { Group, Text } from "@mantine/core";
-import { MidiData, parseMidi, writeMidi } from "midi-file";
+import {
+  MidiData,
+  MidiEvent,
+  MidiSetTempoEvent,
+  parseMidi,
+  writeMidi
+} from "midi-file";
+import { compact, isEmpty } from "lodash-es";
+import { DEFAULT_BPM } from "./session/constants";
 
 type DescriptionProps = {
   label: ReactNode;
@@ -40,5 +48,55 @@ export function downloadMidi(fileName: string, data: MidiData) {
   a.href = url;
   a.download = fileName;
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export function detectBPM(track: MidiEvent[]) {
+  const tempoEvents = track.filter(
+    (event) => event.type === "setTempo"
+  ) as MidiSetTempoEvent[];
+  if (isEmpty(tempoEvents)) return [DEFAULT_BPM];
+  return tempoEvents.map(
+    (event) => +(60e6 / event.microsecondsPerBeat).toFixed(2)
+  );
+}
+
+export function scaleBPM(
+  track: MidiEvent[],
+  newBPM: number,
+  keepDuration: boolean
+) {
+  const bpms = detectBPM(track);
+  if (bpms.length > 1) throw new Error("Cannot scale track with multiple BPMs");
+
+  // Add new tempo information to the track
+  track = compact([
+    newBPM !== 120 && {
+      type: "setTempo",
+      deltaTime: 0,
+      meta: true,
+      microsecondsPerBeat: 60e6 / newBPM
+    },
+    ...track.filter((event) => event.type !== "setTempo")
+  ]);
+
+  // Scale the track if the duration should be preserved
+  if (keepDuration) {
+    const bpm = bpms[0];
+    const scaleFactor = newBPM / bpm;
+
+    let idealTicksFromOrigin = 0,
+      previousActualTicksFromOrigin = 0;
+
+    track = track.map((event) => {
+      const { deltaTime, ...rest } = event;
+      idealTicksFromOrigin += deltaTime * scaleFactor;
+      const realDelta = idealTicksFromOrigin - previousActualTicksFromOrigin;
+      const newDelta = Math.round(realDelta);
+      previousActualTicksFromOrigin += newDelta;
+      return { ...rest, deltaTime: newDelta };
+    });
+  }
+
+  return track;
 }

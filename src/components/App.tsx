@@ -7,14 +7,13 @@ import {
   List,
   Loader,
   Stack,
-  Title,
+  Title
 } from "@mantine/core";
 import { useSetState } from "@mantine/hooks";
-import { IconExclamationCircle } from "@tabler/icons-react";
 import { MidiData } from "midi-file";
 import FileUpload from "./FileUpload";
 import Editor from "./Editor";
-import { Description, downloadMidi, readMidi } from "../utility";
+import { downloadMidi, readMidi } from "../utility";
 
 type AppState = {
   file: File | null;
@@ -28,7 +27,7 @@ function App() {
     file: null,
     data: null,
     loading: false,
-    error: false,
+    error: false
   });
   return (
     <Container py="md">
@@ -36,22 +35,27 @@ function App() {
         <Title order={1} align="center">
           MIDI Scaler
         </Title>
-        <Alert title="Tutorial" icon={<IconExclamationCircle />}>
+        <Title order={3} align="center">
+          Recorded some MIDI without setting a proper project tempo, didn't you?
+        </Title>
+        <Alert title="Tutorial">
           <List type="ordered">
             <List.Item>
-              <strong>Upload</strong> a MIDI file from your computer
+              <b>Upload</b> a MIDI file from your computer
             </List.Item>
             <List.Item>
-              On the top-right corner of each track, click on the 3 dots to open
-              the menu
+              On the top-right corner of each track,{" "}
+              <b>
+                click on the <i>Scale BPM</i> button
+              </b>{" "}
+              to scale the track
             </List.Item>
             <List.Item>
-              Choose from the available options to transform that track
+              Apply any transformation to any track you want
             </List.Item>
             <List.Item>
-              Apply any number of transformations to any track you want
+              <b>Export</b> the final result
             </List.Item>
-            <List.Item>Download the result file</List.Item>
           </List>
         </Alert>
         <FileUpload
@@ -60,32 +64,28 @@ function App() {
               file: file,
               data: null,
               loading: true,
-              error: false,
+              error: false
             });
             try {
               setState({
                 data: await readMidi(file),
-                loading: false,
+                loading: false
               });
             } catch (e) {
               setState({
                 loading: false,
-                error: true,
+                error: true
               });
             }
           }}
         />
-        {file && <Description label="File">{file.name}</Description>}
+        {file && <Title order={3}>{file.name}</Title>}
         {loading ? (
           <Center>
             <Loader size="lg" />
           </Center>
         ) : error ? (
-          <Alert
-            color="red"
-            title="Parse error"
-            icon={<IconExclamationCircle />}
-          >
+          <Alert color="red" title="Parse error">
             Something went wrong during the parsing of the MIDI file. Please try
             again or check to make sure the file is a valid MIDI file.
           </Alert>
@@ -93,6 +93,7 @@ function App() {
           <>
             <Editor data={data} setData={(data) => setState({ data })} />
             <Button
+              size="xl"
               onClick={() => downloadMidi(file?.name ?? "export.mid", data)}
             >
               Export
