@@ -2,4 +2,4 @@
 
 Change midi BPM without changing duration
 
-Website: https://midi-scaler.netlify.app/
+Website: [https://midiscaler.netlify.app/](https://midiscaler.netlify.app/)
